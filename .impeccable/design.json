@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-09T02:37:36Z",
+  "title": "Design System: Greenlight",
+  "extensions": {
+    "colorMeta": {
+      "greenlight-green": {
+        "role": "primary",
+        "displayName": "Greenlight Green",
+        "canonical": "#0E6E66",
+        "tonalRamp": ["oklch(20% 0.05 187)", "oklch(30% 0.06 187)", "oklch(38% 0.07 187)", "oklch(46% 0.07 187)", "oklch(58% 0.07 187)", "oklch(70% 0.06 187)", "oklch(84% 0.04 187)", "oklch(95% 0.02 187)"]
+      },
+      "lamp-green": {
+        "role": "primary",
+        "displayName": "Lamp Green",
+        "canonical": "#7CE0A3",
+        "tonalRamp": ["oklch(25% 0.07 155)", "oklch(38% 0.09 155)", "oklch(52% 0.11 155)", "oklch(65% 0.12 155)", "oklch(75% 0.12 155)", "oklch(83% 0.11 155)", "oklch(90% 0.07 155)", "oklch(96% 0.03 155)"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#171B26",
+        "tonalRamp": ["oklch(15% 0.02 270)", "oklch(22% 0.02 270)", "oklch(32% 0.02 268)", "oklch(43% 0.02 266)", "oklch(55% 0.015 265)", "oklch(68% 0.012 264)", "oklch(82% 0.008 262)", "oklch(94% 0.004 260)"]
+      },
+      "soft-ink": {
+        "role": "neutral",
+        "displayName": "Soft Ink",
+        "canonical": "#5D6470",
+        "tonalRamp": ["oklch(18% 0.02 265)", "oklch(28% 0.02 265)", "oklch(38% 0.02 265)", "oklch(50% 0.02 265)", "oklch(62% 0.018 265)", "oklch(74% 0.014 265)", "oklch(86% 0.008 265)", "oklch(95% 0.004 265)"]
+      },
+      "faint-ink": {
+        "role": "neutral",
+        "displayName": "Faint Ink",
+        "canonical": "#A5AAA3",
+        "tonalRamp": ["oklch(20% 0.006 140)", "oklch(32% 0.006 140)", "oklch(45% 0.006 140)", "oklch(58% 0.006 140)", "oklch(72% 0.005 140)", "oklch(82% 0.005 140)", "oklch(90% 0.004 140)", "oklch(96% 0.003 140)"]
+      },
+      "room-white": {
+        "role": "neutral",
+        "displayName": "Room White",
+        "canonical": "#F6F7F4",
+        "tonalRamp": ["oklch(30% 0.004 130)", "oklch(45% 0.004 130)", "oklch(60% 0.004 130)", "oklch(72% 0.004 130)", "oklch(82% 0.004 130)", "oklch(89% 0.004 130)", "oklch(94% 0.003 130)", "oklch(97% 0.003 130)"]
+      },
+      "panel-white": {
+        "role": "neutral",
+        "displayName": "Panel White",
+        "canonical": "#FFFFFF",
+        "tonalRamp": ["oklch(35% 0 0)", "oklch(50% 0 0)", "oklch(63% 0 0)", "oklch(74% 0 0)", "oklch(84% 0 0)", "oklch(92% 0 0)", "oklch(97% 0 0)", "oklch(100% 0 0)"]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#E4E6E1",
+        "tonalRamp": ["oklch(28% 0.004 130)", "oklch(42% 0.004 130)", "oklch(55% 0.004 130)", "oklch(67% 0.004 130)", "oklch(77% 0.004 130)", "oklch(85% 0.004 130)", "oklch(91% 0.004 130)", "oklch(96% 0.003 130)"]
+      },
+      "selected-tint": {
+        "role": "neutral",
+        "displayName": "Selected Tint",
+        "canonical": "#E7F0EE",
+        "tonalRamp": ["oklch(30% 0.02 175)", "oklch(44% 0.02 175)", "oklch(57% 0.018 175)", "oklch(69% 0.016 175)", "oklch(79% 0.014 175)", "oklch(87% 0.012 175)", "oklch(94% 0.01 175)", "oklch(97% 0.006 175)"]
+      },
+      "hover-tint": {
+        "role": "neutral",
+        "displayName": "Hover Tint",
+        "canonical": "#EEF0EC",
+        "tonalRamp": ["oklch(32% 0.004 140)", "oklch(46% 0.004 140)", "oklch(59% 0.004 140)", "oklch(71% 0.004 140)", "oklch(81% 0.004 140)", "oklch(88% 0.004 140)", "oklch(95% 0.004 140)", "oklch(98% 0.003 140)"]
+      },
+      "score-good": {
+        "role": "secondary",
+        "displayName": "Score Good",
+        "canonical": "#2FA65A",
+        "tonalRamp": ["oklch(24% 0.08 150)", "oklch(36% 0.11 150)", "oklch(48% 0.13 150)", "oklch(58% 0.14 150)", "oklch(64% 0.15 150)", "oklch(74% 0.13 150)", "oklch(86% 0.08 150)", "oklch(95% 0.04 150)"]
+      },
+      "score-mid": {
+        "role": "secondary",
+        "displayName": "Score Mid",
+        "canonical": "#E0A93C",
+        "tonalRamp": ["oklch(28% 0.07 85)", "oklch(40% 0.09 85)", "oklch(52% 0.11 85)", "oklch(64% 0.12 85)", "oklch(75% 0.13 85)", "oklch(83% 0.11 85)", "oklch(90% 0.08 85)", "oklch(96% 0.04 85)"]
+      },
+      "score-low": {
+        "role": "secondary",
+        "displayName": "Score Low",
+        "canonical": "#D9534F",
+        "tonalRamp": ["oklch(24% 0.09 25)", "oklch(35% 0.12 25)", "oklch(47% 0.14 25)", "oklch(60% 0.15 25)", "oklch(70% 0.13 25)", "oklch(80% 0.09 25)", "oklch(89% 0.05 25)", "oklch(96% 0.02 25)"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "The interview question only — largest element in the room, centered, text-wrap: balance." },
+      "headline": { "displayName": "Headline", "purpose": "Report section titles and the grading interstitial." },
+      "title": { "displayName": "Title", "purpose": "Buttons, rubric dimension names, transcript speaker labels." },
+      "body": { "displayName": "Body", "purpose": "Transcript text, feedback comments, hints. Cap at 65–75ch." },
+      "label": { "displayName": "Label", "purpose": "Uppercase satellite lines — category, On air, session captions. +0.08em tracking (0.1em for On air)." },
+      "clock": { "displayName": "Clock", "purpose": "Compact elapsed/remaining readouts. Always tabular-nums." }
+    },
+    "shadows": [
+      { "name": "drawer", "value": "0 25px 50px -12px rgba(0,0,0,0.25)", "purpose": "The transcript overlay only — the single floating element in the system. Resting surfaces are flat." }
+    ],
+    "motion": [
+      { "name": "rise", "value": "gl-rise 0.65s cubic-bezier(0.2, 0.7, 0.2, 1) both", "purpose": "Staggered entrance (fade + 14px rise) for phase changes." },
+      { "name": "pulse", "value": "gl-pulse 1.6s ease-in-out infinite", "purpose": "The on-air lamp and Begin-button dot breathing." },
+      { "name": "hover-scale", "value": "transform 0.15s ease-out; scale(1.03) hover / scale(0.98) active", "purpose": "Primary button feedback — transform only, no color shift." },
+      { "name": "sidebar-collapse", "value": "width 0.3s ease-in-out", "purpose": "Question-bank rail expanding/collapsing." }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The Begin-interview action: Greenlight Green pill with a pulsing Lamp Green dot.",
+      "html": "<button class=\"ds-btn-primary\"><span class=\"ds-btn-lamp\"></span>Begin interview</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 12px; background: #0E6E66; color: #fff; font-family: 'Hanken Grotesk', system-ui, sans-serif; font-size: 17px; font-weight: 600; padding: 14px 28px 14px 20px; border: none; border-radius: 9999px; cursor: pointer; transition: transform 0.15s ease-out; } .ds-btn-primary:hover { transform: scale(1.03); } .ds-btn-primary:active { transform: scale(0.98); } .ds-btn-primary:focus-visible { outline: 2px solid #0E6E66; outline-offset: 2px; } .ds-btn-lamp { width: 10px; height: 10px; border-radius: 9999px; background: #7CE0A3; animation: ds-pulse 2s ease-in-out infinite; } @keyframes ds-pulse { 0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(47,166,90,0.35); } 50% { opacity: 0.75; box-shadow: 0 0 0 6px rgba(47,166,90,0); } }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Quiet pill for supporting actions (Pause mic, Back to practice room).",
+      "html": "<button class=\"ds-btn-secondary\">Pause mic</button>",
+      "css": ".ds-btn-secondary { background: #FFFFFF; color: #171B26; font-family: 'Hanken Grotesk', system-ui, sans-serif; font-size: 14px; font-weight: 600; padding: 8px 20px; border: 1px solid #E4E6E1; border-radius: 9999px; cursor: pointer; transition: background 0.15s ease-out; } .ds-btn-secondary:hover { background: #EEF0EC; } .ds-btn-secondary:focus-visible { outline: 2px solid #0E6E66; outline-offset: 2px; }"
+    },
+    {
+      "name": "Dark Button",
+      "kind": "button",
+      "refersTo": "button-dark",
+      "description": "Decisive-but-calm action (End interview early) — Ink, never red.",
+      "html": "<button class=\"ds-btn-dark\">End interview early</button>",
+      "css": ".ds-btn-dark { background: #171B26; color: #fff; font-family: 'Hanken Grotesk', system-ui, sans-serif; font-size: 14px; font-weight: 600; padding: 8px 20px; border: none; border-radius: 9999px; cursor: pointer; transition: opacity 0.15s ease-out; } .ds-btn-dark:hover { opacity: 0.88; } .ds-btn-dark:focus-visible { outline: 2px solid #0E6E66; outline-offset: 2px; }"
+    },
+    {
+      "name": "Inline Input",
+      "kind": "input",
+      "refersTo": "input-inline",
+      "description": "The typed-answer fallback pill — load-bearing for non-Chrome and mic-blocked users.",
+      "html": "<input class=\"ds-input\" placeholder=\"Backup: type a point and press Enter…\" />",
+      "css": ".ds-input { width: 320px; background: #FFFFFF; color: #171B26; font-family: 'Hanken Grotesk', system-ui, sans-serif; font-size: 14px; padding: 8px 16px; border: 1px solid #E4E6E1; border-radius: 9999px; outline: none; transition: border-color 0.15s ease-out; } .ds-input::placeholder { color: #5D6470; } .ds-input:focus-visible { border-color: #0E6E66; outline: 2px solid #0E6E66; outline-offset: 1px; }"
+    },
+    {
+      "name": "Question Nav Item",
+      "kind": "nav",
+      "refersTo": "nav-item-active",
+      "description": "Sidebar question rows — Selected Tint wash + Greenlight Green marks the active question.",
+      "html": "<nav class=\"ds-nav\"><button class=\"ds-nav-item ds-nav-item--active\">Estimate how much the Empire State Building weighs.</button><button class=\"ds-nav-item\">How many dentists are there in New York City?</button></nav>",
+      "css": ".ds-nav { display: flex; flex-direction: column; gap: 4px; width: 260px; } .ds-nav-item { text-align: left; background: transparent; color: #171B26; font-family: 'Hanken Grotesk', system-ui, sans-serif; font-size: 14px; font-weight: 400; padding: 8px 12px; border: none; border-radius: 8px; cursor: pointer; transition: background 0.15s ease-out; } .ds-nav-item:hover { background: #EEF0EC; } .ds-nav-item:focus-visible { outline: 2px solid #0E6E66; outline-offset: -2px; } .ds-nav-item--active { background: #E7F0EE; color: #0E6E66; font-weight: 600; }"
+    },
+    {
+      "name": "Timer Pill",
+      "kind": "chip",
+      "refersTo": "timer-pill",
+      "description": "Peripheral glanceable clock in the bottom bar — tabular numerals, hairline border.",
+      "html": "<span class=\"ds-timer-pill\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\"><circle cx=\"12\" cy=\"12\" r=\"9\" stroke=\"#0E6E66\" stroke-width=\"2\"/><path d=\"M12 7v5l3 2\" stroke=\"#0E6E66\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>24:46</span>",
+      "css": ".ds-timer-pill { display: inline-flex; align-items: center; gap: 8px; background: #FFFFFF; color: #0E6E66; font-family: 'Hanken Grotesk', system-ui, sans-serif; font-size: 16px; font-weight: 500; font-variant-numeric: tabular-nums; padding: 8px 16px 8px 12px; border: 1px solid #E4E6E1; border-radius: 9999px; }"
+    },
+    {
+      "name": "Score Bar",
+      "kind": "custom",
+      "refersTo": "report-card",
+      "description": "Report rubric row — five pill segments filled to the score in traffic-light color.",
+      "html": "<div class=\"ds-score\"><div class=\"ds-score-head\"><span class=\"ds-score-dim\">Communication</span><span class=\"ds-score-val\">4/5</span></div><div class=\"ds-score-bar\"><span class=\"ds-score-seg ds-score-seg--on\"></span><span class=\"ds-score-seg ds-score-seg--on\"></span><span class=\"ds-score-seg ds-score-seg--on\"></span><span class=\"ds-score-seg ds-score-seg--on\"></span><span class=\"ds-score-seg\"></span></div></div>",
+      "css": ".ds-score { width: 320px; font-family: 'Hanken Grotesk', system-ui, sans-serif; } .ds-score-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; } .ds-score-dim { font-size: 14px; font-weight: 600; color: #171B26; } .ds-score-val { font-size: 14px; font-weight: 600; color: #2FA65A; font-variant-numeric: tabular-nums; } .ds-score-bar { display: flex; gap: 4px; } .ds-score-seg { height: 8px; flex: 1; border-radius: 9999px; background: #E8EAE6; } .ds-score-seg--on { background: #2FA65A; }"
+    },
+    {
+      "name": "On-Air Satellite",
+      "kind": "custom",
+      "refersTo": "button-primary",
+      "description": "The live-state satellite line: pulsing lamp + tracked uppercase label, orbiting above the question.",
+      "html": "<div class=\"ds-onair\"><span class=\"ds-onair-lamp\"></span>On air</div>",
+      "css": ".ds-onair { display: inline-flex; align-items: center; gap: 10px; font-family: 'Hanken Grotesk', system-ui, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #0E6E66; } .ds-onair-lamp { width: 8px; height: 8px; border-radius: 9999px; background: #2FA65A; animation: ds-onair-pulse 1.6s ease-in-out infinite; } @keyframes ds-onair-pulse { 0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(47,166,90,0.35); } 50% { opacity: 0.75; box-shadow: 0 0 0 6px rgba(47,166,90,0); } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Green Room",
+    "overview": "Greenlight is the calm room where performers wait before going on stage. Every surface answers to that metaphor: the interview question sits alone at center stage, an on-air lamp pulses quietly when the session is live, a waveform breathes with the candidate's voice, and the clock is a stagehand — present, never the star. The user arrives anxious; the room's job is to lower their heart rate. Light, near-white surfaces, one deep green voice, one typeface, hairline structure, and generous still space do that work. The system explicitly rejects the editorial/magazine register (serif display type, literary flourish — the direction this product deliberately retired), the generic SaaS dashboard (purple gradients, Inter-everywhere, hero-metric cards), and exam-simulator pressure (giant countdowns, warnings, proctored-test energy). Pressure is the interview's job; the UI absorbs it.",
+    "keyCharacteristics": [
+      "One typeface (Hanken Grotesk) carries every role — hierarchy by weight, size, color, and space",
+      "The question is always the center of gravity; everything else orbits it",
+      "Flat, border-first surfaces: depth is drawn with hairlines and tonal tints, not shadows",
+      "One green voice (#0E6E66) used sparingly, for what is live, chosen, or go",
+      "Quiet precision: tabular numerals, hairline rules, disciplined 12/32px orbit rhythm"
+    ],
+    "rules": [
+      { "name": "The One Voice Rule", "body": "Greenlight Green appears on well under 10% of any screen. If two unrelated elements are green at once, one of them is wrong.", "section": "colors" },
+      { "name": "The Traffic-Light Rule", "body": "The good/mid/low triad appears only on scores and the urgent-time state. It is a message, not a palette — never use it to decorate.", "section": "colors" },
+      { "name": "The One Voice (Type) Rule", "body": "One family, every role. Hierarchy comes from weight, size, color, and space — never from switching typefaces.", "section": "typography" },
+      { "name": "The Tabular Clock Rule", "body": "Any number that counts — timers, turn counts, question indices — sets font-variant-numeric: tabular-nums so nothing jitters while it ticks.", "section": "typography" },
+      { "name": "The Hairline Rule", "body": "Structure is drawn with 1px lines and tonal tints. If a resting card needs a shadow to be visible, the layering is wrong — fix the tint, not the shadow.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep the question the largest element in the room, centered, in Display type with text-wrap: balance. Everything else orbits it.",
+      "Do hold Greenlight Green to well under 10% of any screen (the One Voice Rule) — it marks live, selected, and go.",
+      "Do set tabular-nums on every counting number (the Tabular Clock Rule).",
+      "Do draw structure with 1px Hairline borders and tonal tints; keep resting surfaces flat.",
+      "Do use full-pill shape for every button and inline input — one affordance vocabulary everywhere.",
+      "Do keep the typed-answer fallback visible and usable in every live session; voice is Chrome-only.",
+      "Do honor prefers-reduced-motion for every animation, including the lamp pulse and waveform."
+    ],
+    "donts": [
+      "Don't reintroduce serif display type, a mono accent face, or any second family — the editorial/magazine register is retired by name in PRODUCT.md.",
+      "Don't reach for the generic SaaS dashboard kit PRODUCT.md bans: purple-gradient-on-white, Inter-everywhere, hero-metric cards, identical feature-tile grids.",
+      "Don't let the clock outrank the question. Giant countdown numerals, alarm colors before the final minute, or any proctored-exam pressure device is prohibited — cold enterprise / exam-simulator energy is a named anti-reference.",
+      "Don't use the traffic-light triad decoratively; it speaks only for scores and the final-minute state.",
+      "Don't add shadows to resting surfaces, side-stripe borders (border-left > 1px as accent), or gradient text — ever.",
+      "Don't set body copy in Faint Ink (#A5AAA3); it fails contrast. Soft Ink (#5D6470) is the floor for readable text on Room White."
+    ]
+  }
+}

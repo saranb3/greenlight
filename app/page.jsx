@@ -91,6 +91,35 @@ function TranscriptIcon() {
   );
 }
 
+function MicIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="9" y="3" width="6" height="11" rx="3" stroke="currentColor" strokeWidth="2" />
+      <path
+        d="M5 11a7 7 0 0014 0M12 18v3"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function MicOffIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="9" y="3" width="6" height="11" rx="3" stroke="currentColor" strokeWidth="2" />
+      <path
+        d="M5 11a7 7 0 0014 0M12 18v3"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <path d="M4 4l16 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function CloseIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -202,6 +231,7 @@ export default function Home() {
   const [typed, setTyped] = useState("");
   const [feedback, setFeedback] = useState(null);
   const [error, setError] = useState(null);
+  const [micBlocked, setMicBlocked] = useState(false); // typed fallback appears only when voice can't work
   const [showTranscript, setShowTranscript] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [openCategories, setOpenCategories] = useState(() => ({
@@ -424,6 +454,7 @@ export default function Home() {
     };
     rec.onerror = (e) => {
       if (e.error === "not-allowed") {
+        setMicBlocked(true);
         setError(
           "Microphone access was blocked. You can type your answers below instead."
         );
@@ -622,7 +653,7 @@ export default function Home() {
       style={{
         background: `radial-gradient(1100px 700px at 75% -12%, #E9F0E8 0%, rgba(233,240,232,0) 60%), ${PAPER}`,
         color: INK,
-        fontFamily: "'Archivo', ui-sans-serif, sans-serif",
+        fontFamily: "var(--font-app)",
       }}
     >
       {/* ------------------------------------------------ left: question bank */}
@@ -648,29 +679,26 @@ export default function Home() {
             >
               <HamburgerIcon />
             </button>
-            <div
-              className="w-7 h-7 rounded-md flex items-center justify-center"
-              style={{ background: ACCENT }}
-            >
-              <span className="text-white text-sm gl-display font-bold">G</span>
-            </div>
+            <span
+              className="w-3 h-3 rounded-full"
+              style={{ background: ACCENT, boxShadow: "0 0 0 4px #E7F0EE" }}
+            />
           </div>
         ) : (
           <>
             <div
-              className="px-5 pt-6 pb-4"
+              className="px-5 py-5"
               style={{ borderBottom: `1px solid ${LINE}` }}
             >
               <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <div
-                    className="w-7 h-7 rounded-md flex items-center justify-center"
-                    style={{ background: ACCENT }}
-                  >
-                    <span className="text-white text-sm gl-display font-bold">
-                      G
-                    </span>
-                  </div>
+                <div className="flex items-center gap-2.5">
+                  <span
+                    className="w-3 h-3 rounded-full shrink-0"
+                    style={{
+                      background: ACCENT,
+                      boxShadow: "0 0 0 4px #E7F0EE",
+                    }}
+                  />
                   <span className="gl-display font-semibold text-lg tracking-tight">
                     Greenlight
                   </span>
@@ -691,9 +719,6 @@ export default function Home() {
                   <HamburgerIcon />
                 </button>
               </div>
-              <p className="text-xs mt-2" style={{ color: SOFT }}>
-                Live mock PM interviews. 25 minutes, graded.
-              </p>
             </div>
 
             <nav className="flex-1 px-3 py-4">
@@ -766,10 +791,18 @@ export default function Home() {
       {/* ------------------------------------------------ center: the room */}
       <main className="flex-1 h-full relative flex flex-col min-w-0">
         <div className="flex-1 overflow-y-auto flex flex-col items-center px-8 py-8">
-        <div className="w-full max-w-2xl">
+        <div
+          className={`w-full ${
+            phase === "live" || phase === "idle"
+              ? "max-w-4xl my-auto"
+              : "max-w-2xl"
+          }`}
+        >
+          {(phase === "grading" || phase === "report") && (
+          <>
           <div className="gl-rise flex items-center gap-3 mb-5">
             <span
-              className="gl-mono text-[11px] uppercase tracking-[0.22em]"
+              className="gl-mono text-[11px] uppercase tracking-[0.08em]"
               style={{ color: ACCENT }}
             >
               {selected.category}
@@ -777,7 +810,7 @@ export default function Home() {
             <span className="h-px flex-1" style={{ background: LINE }} />
             {qIndex >= 0 && (
               <span
-                className="gl-mono text-[11px] tabular-nums uppercase tracking-[0.22em]"
+                className="gl-mono text-[11px] tabular-nums uppercase tracking-[0.08em]"
                 style={{ color: "#A5AAA3" }}
               >
                 No. {String(qIndex + 1).padStart(2, "0")} / {activeGroup.questions.length}
@@ -789,76 +822,92 @@ export default function Home() {
             style={{
               fontSize: "clamp(30px, 3.6vw, 44px)",
               lineHeight: 1.12,
-              fontWeight: 560,
+              fontWeight: 600,
               letterSpacing: "-0.015em",
+              textWrap: "balance",
               animationDelay: "0.07s",
             }}
           >
             {selected.question}
           </h1>
+          </>
+          )}
 
           {phase === "idle" && (
-            <div className="mt-14">
+            <div className="gl-rise flex flex-col items-center text-center py-6">
+              {/* satellite: category + position, above the question */}
               <div
-                className="gl-rise h-px w-full"
-                style={{ background: LINE, animationDelay: "0.14s" }}
-              />
-              <div
-                className="gl-rise flex flex-wrap items-end justify-between gap-x-12 gap-y-8 pt-8"
-                style={{ animationDelay: "0.2s" }}
+                className="flex items-center gap-2.5 gl-mono text-[11px] uppercase tracking-[0.08em]"
+                style={{ color: ACCENT }}
               >
-                <div>
-                  <div
-                    className="gl-mono text-[11px] uppercase tracking-[0.22em] mb-2"
-                    style={{ color: SOFT }}
-                  >
-                    Session
-                  </div>
-                  <div
-                    className="gl-mono tabular-nums"
-                    style={{
-                      fontSize: "clamp(56px, 7vw, 84px)",
-                      fontWeight: 500,
-                      letterSpacing: "-0.04em",
-                      lineHeight: 1,
-                      color: INK,
-                    }}
-                  >
-                    25:00
-                  </div>
-                </div>
-                <div className="flex flex-col items-start gap-4 pb-1">
-                  <button
-                    onClick={startSession}
-                    className="gl-display flex items-center gap-3 pl-5 pr-7 py-3.5 rounded-full text-white transition-transform hover:scale-[1.03] active:scale-[0.98]"
-                    style={{ background: ACCENT, fontSize: 17, fontWeight: 560 }}
-                  >
-                    <span
-                      className="w-2.5 h-2.5 rounded-full shrink-0"
-                      style={{
-                        background: "#7CE0A3",
-                        animation: "gl-pulse 2s ease-in-out infinite",
-                      }}
-                    />
-                    Begin interview
-                  </button>
-                  <div
-                    className="gl-mono text-[10px] uppercase tracking-[0.22em]"
+                {selected.category}
+                {qIndex >= 0 && (
+                  <span
+                    className="tabular-nums"
                     style={{ color: "#A5AAA3" }}
                   >
-                    {speechSupported
-                      ? "Live voice · Follow-ups · Graded"
-                      : "Typed answers · Follow-ups · Graded"}
-                  </div>
-                </div>
+                    No. {String(qIndex + 1).padStart(2, "0")} /{" "}
+                    {activeGroup.questions.length}
+                  </span>
+                )}
+              </div>
+              <div
+                className="gl-mono tabular-nums mt-3 text-base font-medium"
+                style={{ color: SOFT }}
+              >
+                25:00
+                <span style={{ color: "#A5AAA3" }}> session</span>
+              </div>
+
+              {/* the center of gravity: the question itself */}
+              <h1
+                className="gl-display mt-8"
+                style={{
+                  fontSize: "clamp(30px, 3.6vw, 44px)",
+                  lineHeight: 1.15,
+                  fontWeight: 600,
+                  letterSpacing: "-0.015em",
+                  textWrap: "balance",
+                }}
+              >
+                {selected.question}
+              </h1>
+
+              <div
+                className="mt-8 h-px"
+                style={{ width: "min(280px, 100%)", background: LINE }}
+              />
+
+              <button
+                onClick={startSession}
+                className="gl-display mt-8 flex items-center gap-3 pl-5 pr-7 py-3.5 rounded-full text-white transition-transform hover:scale-[1.03] active:scale-[0.98]"
+                style={{ background: ACCENT, fontSize: 17, fontWeight: 600 }}
+              >
+                <span
+                  className="w-2.5 h-2.5 rounded-full shrink-0"
+                  style={{
+                    background: "#7CE0A3",
+                    animation: "gl-pulse 2s ease-in-out infinite",
+                  }}
+                />
+                Start
+              </button>
+              <div
+                className="gl-mono text-[10px] uppercase tracking-[0.08em] mt-4"
+                style={{ color: "#A5AAA3" }}
+              >
+                {speechSupported
+                  ? "Live voice · Follow-ups · Graded"
+                  : "Typed answers · Follow-ups · Graded"}
               </div>
             </div>
           )}
 
           {phase === "live" && (
-            <div className="gl-rise mt-10 flex flex-col items-center text-center">
+            <div className="gl-rise flex flex-col items-center text-center py-6">
+              {/* satellite: on-air lamp + compact clock, above the question */}
               <div
-                className="flex items-center gap-2.5 gl-mono text-[11px] uppercase tracking-[0.28em]"
+                className="flex items-center gap-2.5 gl-mono text-[11px] uppercase tracking-[0.1em]"
                 style={{ color: timerUrgent ? LOW : ACCENT }}
               >
                 <span
@@ -871,25 +920,32 @@ export default function Home() {
                 On air
               </div>
               <div
-                className="gl-mono tabular-nums mt-4"
-                style={{
-                  fontSize: "clamp(64px, 9vw, 104px)",
-                  fontWeight: 500,
-                  letterSpacing: "-0.045em",
-                  lineHeight: 1,
-                  color: timerUrgent ? LOW : INK,
-                }}
+                className="gl-mono tabular-nums mt-3 text-base font-medium"
+                style={{ color: timerUrgent ? LOW : SOFT }}
               >
                 {fmt(elapsed)}
+                <span style={{ color: timerUrgent ? LOW : "#A5AAA3" }}>
+                  {" · "}
+                  {fmt(timeLeft)} left
+                </span>
               </div>
-              <div
-                className="gl-mono text-[11px] uppercase tracking-[0.22em] mt-3"
-                style={{ color: timerUrgent ? LOW : "#A5AAA3" }}
+
+              {/* the center of gravity: the question itself */}
+              <h1
+                className="gl-display mt-8"
+                style={{
+                  fontSize: "clamp(30px, 3.6vw, 44px)",
+                  lineHeight: 1.15,
+                  fontWeight: 600,
+                  letterSpacing: "-0.015em",
+                  textWrap: "balance",
+                }}
               >
-                {fmt(timeLeft)} remaining
-              </div>
+                {selected.question}
+              </h1>
+
               <div
-                className="relative mt-5 h-px"
+                className="relative mt-8 h-px"
                 style={{ width: "min(280px, 100%)", background: LINE }}
               >
                 <div
@@ -901,7 +957,7 @@ export default function Home() {
                 />
               </div>
 
-              <div className="mt-9">
+              <div className="mt-8">
                 <Waveform
                   active={listening || aiState === "speaking"}
                   color={
@@ -911,52 +967,56 @@ export default function Home() {
                   synthetic={aiState === "speaking" || aiState === "thinking"}
                 />
               </div>
-              <p className="mt-4 text-sm font-medium">{liveStatus}</p>
-              <p className="text-xs mt-1 mb-6" style={{ color: SOFT }}>
+              <p className="mt-5 text-lg font-medium">{liveStatus}</p>
+              <p className="text-sm mt-1.5 mb-7" style={{ color: SOFT }}>
                 {aiState === "idle" && listening
                   ? "Keep reasoning out loud. A 2–3 second pause hands the floor over."
                   : "\u00A0"}
               </p>
-              <div className="flex gap-3 mb-6">
+              <div className="flex items-center gap-3 mb-6">
                 {speechSupported && (
                   <button
                     onClick={listening ? stopListening : startListening}
-                    className="px-5 py-2 rounded-full text-sm font-semibold"
+                    aria-label={listening ? "Pause mic" : "Resume mic"}
+                    title={listening ? "Pause mic" : "Resume mic"}
+                    className="w-11 h-11 rounded-full flex items-center justify-center transition-colors"
                     style={{
                       border: `1px solid ${LINE}`,
-                      color: INK,
-                      background: "#fff",
+                      color: listening ? INK : SOFT,
+                      background: listening ? "#fff" : "#EEF0EC",
                     }}
                   >
-                    {listening ? "Pause mic" : "Resume mic"}
+                    {listening ? <MicIcon /> : <MicOffIcon />}
                   </button>
                 )}
                 <button
                   onClick={endSession}
-                  className="px-5 py-2 rounded-full text-sm font-semibold text-white"
+                  className="px-5 py-2.5 rounded-full text-sm font-semibold text-white"
                   style={{ background: INK }}
                 >
-                  End interview early
+                  End interview
                 </button>
               </div>
 
-              <div className="w-full max-w-md flex gap-2">
-                <input
-                  value={typed}
-                  onChange={(e) => setTyped(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && addTyped()}
-                  placeholder="Backup: type a point and press Enter…"
-                  className="flex-1 px-4 py-2 rounded-full text-sm outline-none"
-                  style={{ border: `1px solid ${LINE}`, background: PANEL }}
-                />
-                <button
-                  onClick={addTyped}
-                  className="px-4 py-2 rounded-full text-sm font-semibold"
-                  style={{ border: `1px solid ${LINE}`, background: PANEL }}
-                >
-                  Add
-                </button>
-              </div>
+              {(!speechSupported || micBlocked) && (
+                <div className="w-full max-w-md flex gap-2">
+                  <input
+                    value={typed}
+                    onChange={(e) => setTyped(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && addTyped()}
+                    placeholder="Type a point and press Enter…"
+                    className="flex-1 px-4 py-2 rounded-full text-sm outline-none"
+                    style={{ border: `1px solid ${LINE}`, background: PANEL }}
+                  />
+                  <button
+                    onClick={addTyped}
+                    className="px-4 py-2 rounded-full text-sm font-semibold"
+                    style={{ border: `1px solid ${LINE}`, background: PANEL }}
+                  >
+                    Add
+                  </button>
+                </div>
+              )}
               {error && (
                 <p className="text-xs mt-3" style={{ color: LOW }}>
                   {error}
@@ -970,12 +1030,12 @@ export default function Home() {
               <Waveform active={true} />
               <p
                 className="gl-display mt-7"
-                style={{ fontSize: 26, fontWeight: 560 }}
+                style={{ fontSize: 26, fontWeight: 600 }}
               >
                 Marking your interview
               </p>
               <p
-                className="gl-mono text-[11px] uppercase tracking-[0.22em] mt-3"
+                className="gl-mono text-[11px] uppercase tracking-[0.08em] mt-3"
                 style={{ color: SOFT }}
               >
                 Scoring {RUBRIC.length} PM competencies
@@ -991,7 +1051,7 @@ export default function Home() {
               <div className="p-6" style={{ borderBottom: `1px solid ${LINE}` }}>
                 <h2
                   className="gl-display mb-2"
-                  style={{ fontSize: 22, fontWeight: 560 }}
+                  style={{ fontSize: 22, fontWeight: 600 }}
                 >
                   Summary
                 </h2>
@@ -1068,7 +1128,7 @@ export default function Home() {
             </div>
           ) : (
             <span
-              className="gl-mono text-[10px] uppercase tracking-[0.22em]"
+              className="gl-mono text-[10px] uppercase tracking-[0.08em]"
               style={{ color: "#A5AAA3" }}
             >
               25:00 session · graded
