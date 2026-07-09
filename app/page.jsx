@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { QUESTION_BANK, RUBRIC } from "@/lib/questions";
+import * as kokoro from "@/lib/tts";
 
 // ---------------------------------------------------------------------------
 // Greenlight — PM interview practice room (interactive interviewer)
@@ -21,6 +22,7 @@ const LOW = "#D9534F";
 
 const SESSION_SECONDS = 25 * 60; // strict 25-minute interview
 const SILENCE_MS = 2500; // pause length that hands the floor to the interviewer
+const SPECULATE_MS = 1200; // start preparing the follow-up early so it plays the instant the pause matures
 const BARGE_RMS = 0.08; // mic loudness (0–1) that counts as the candidate cutting in
 
 const fmt = (s) => {
@@ -248,6 +250,7 @@ export default function Home() {
   const startedAtRef = useRef(null);
   const lastSpeechAtRef = useRef(0);
   const aiBusyRef = useRef(false);
+  const speculationRef = useRef(null); // { key, promise } — reply prepared during the silence window
   const turnsRef = useRef([]);
   const interimRef = useRef("");
   const timeLeftRef = useRef(SESSION_SECONDS);
@@ -288,6 +291,17 @@ export default function Home() {
     setTtsSupported("speechSynthesis" in window);
   }, []);
 
+  // Kokoro neural voice: start downloading the model the moment the user
+  // lands, so it's warm by the time a session starts. If it fails (no
+  // WASM/WebGPU, offline), the OS Web Speech voice is the fallback.
+  const [voiceStatus, setVoiceStatus] = useState("loading"); // loading | ready | failed
+  useEffect(() => {
+    kokoro
+      .preload()
+      .then(() => setVoiceStatus("ready"))
+      .catch(() => setVoiceStatus("failed"));
+  }, []);
+
   // -- timer ------------------------------------------------------------------
   useEffect(() => {
     if (phase !== "live") return;
@@ -321,7 +335,9 @@ export default function Home() {
   };
 
   // -- text to speech -----------------------------------------------------------
-  const speak = (text, onDone) => {
+  // Primary: Kokoro-82M neural voice, synthesized in-browser (lib/tts.js).
+  // Fallback: the OS Web Speech voice, only while the model loads or if it failed.
+  const fallbackSpeak = (text, onDone) => {
     if (!ttsSupported) {
       onDone && onDone();
       return;
@@ -340,9 +356,26 @@ export default function Home() {
     window.speechSynthesis.speak(u);
   };
 
-  const stopSpeaking = () => {
-    if (ttsSupported) window.speechSynthesis.cancel();
+  // Begin synthesizing now (or null if the model isn't ready → fallback voice).
+  const makeClip = (text) =>
+    kokoro.getStatus() === "ready" ? kokoro.createClip(text) : null;
+
+  const speakPrepared = ({ reply, clip }, onDone) => {
+    if (clip) kokoro.playClip(clip, onDone);
+    else fallbackSpeak(reply, onDone);
   };
+
+  const stopSpeaking = () => {
+    kokoro.stop();
+    // Checked against the global (not ttsSupported state) so the stale closures
+    // inside startMicMeter/startListening still cancel correctly.
+    if (typeof window !== "undefined" && "speechSynthesis" in window)
+      window.speechSynthesis.cancel();
+  };
+
+  // Is the interviewer's voice (either engine) currently audible?
+  const voiceActive = () =>
+    kokoro.isSpeaking() || !!window.speechSynthesis?.speaking;
 
   // -- live mic meter (real-time waveform + instant barge-in) -----------------------
   const startMicMeter = useCallback(async () => {
@@ -373,11 +406,7 @@ export default function Home() {
         const rms = Math.sqrt(sum / timeData.length);
         // Instant barge-in: the moment the candidate makes sustained sound,
         // cut the interviewer off — no waiting on speech recognition.
-        if (
-          aiBusyRef.current &&
-          window.speechSynthesis?.speaking &&
-          rms > BARGE_RMS
-        ) {
+        if (aiBusyRef.current && voiceActive() && rms > BARGE_RMS) {
           bargeFramesRef.current += 1;
           if (bargeFramesRef.current >= 2) {
             stopSpeaking();
@@ -425,7 +454,7 @@ export default function Home() {
     rec.lang = "en-US";
     rec.onresult = (e) => {
       // Barge-in: the candidate started talking — cut the interviewer off.
-      if (aiBusyRef.current && window.speechSynthesis?.speaking) {
+      if (aiBusyRef.current && voiceActive()) {
         stopSpeaking();
         aiBusyRef.current = false;
         setAiState("idle");
@@ -489,7 +518,21 @@ export default function Home() {
       if (t.length === 0) return;
       const last = t[t.length - 1];
       if (last.role !== "you") return; // nothing new since interviewer spoke
-      if (Date.now() - lastSpeechAtRef.current < SILENCE_MS) return;
+      const silence = Date.now() - lastSpeechAtRef.current;
+      // Speculate: once the pause looks real, start fetching + synthesizing the
+      // follow-up in the background so it can play the moment the floor formally
+      // changes hands. Keyed by turn count — if the candidate resumes talking,
+      // the stale reply is simply never played.
+      if (silence >= SPECULATE_MS) {
+        const key = t.length;
+        if (!speculationRef.current || speculationRef.current.key !== key) {
+          speculationRef.current = {
+            key,
+            promise: prepareReply().catch(() => null),
+          };
+        }
+      }
+      if (silence < SILENCE_MS) return;
       runInterviewerTurn();
     }, 400);
     return () => clearInterval(id);
@@ -501,28 +544,43 @@ export default function Home() {
       .map((x) => `${x.role === "you" ? "CANDIDATE" : "INTERVIEWER"}: ${x.text}`)
       .join("\n");
 
+  // Fetch the interviewer's next line and start synthesizing it. Pure — no UI
+  // state — so it can run speculatively during the silence window.
+  const prepareReply = async () => {
+    const res = await fetch("/api/interviewer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        question: selected.question,
+        transcript: conversationText(turnsRef.current),
+        minsLeft: Math.ceil(timeLeftRef.current / 60),
+      }),
+    });
+    const { reply } = await res.json();
+    if (!reply) return null;
+    return { reply, clip: makeClip(reply) };
+  };
+
   const runInterviewerTurn = async () => {
     aiBusyRef.current = true;
     setAiState("thinking");
+    const spec = speculationRef.current;
+    speculationRef.current = null;
     try {
-      const res = await fetch("/api/interviewer", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          question: selected.question,
-          transcript: conversationText(turnsRef.current),
-          minsLeft: Math.ceil(timeLeftRef.current / 60),
-        }),
-      });
-      const { reply } = await res.json();
-      if (phaseRef.current !== "live" || !reply) {
+      // Use the speculative reply if it was prepared against the current
+      // transcript; otherwise fetch fresh.
+      const prepared =
+        spec && spec.key === turnsRef.current.length
+          ? await spec.promise
+          : await prepareReply();
+      if (phaseRef.current !== "live" || !prepared) {
         aiBusyRef.current = false;
         setAiState("idle");
         return;
       }
-      addTurn("interviewer", reply);
+      addTurn("interviewer", prepared.reply);
       setAiState("speaking");
-      speak(reply, () => {
+      speakPrepared(prepared, () => {
         aiBusyRef.current = false;
         setAiState("idle");
         lastSpeechAtRef.current = Date.now(); // don't instantly re-trigger
@@ -548,11 +606,15 @@ export default function Home() {
       startMicMeter();
     }
     const opener = `Thanks for coming in. Here's your question: ${selected.question}`;
+    // Start synthesizing the opener on the click itself so the first sentence
+    // is ready by the time it plays.
+    const openerPrepared = { reply: opener, clip: makeClip(opener) };
+    speculationRef.current = null;
     aiBusyRef.current = true;
     setAiState("speaking");
     setTimeout(() => {
       addTurn("interviewer", opener);
-      speak(opener, () => {
+      speakPrepared(openerPrepared, () => {
         aiBusyRef.current = false;
         setAiState("idle");
         lastSpeechAtRef.current = Date.now();
@@ -564,6 +626,7 @@ export default function Home() {
     stopListening();
     stopMicMeter();
     stopSpeaking();
+    speculationRef.current = null;
     aiBusyRef.current = false;
     setAiState("idle");
     setPhase("grading");
@@ -614,6 +677,7 @@ export default function Home() {
     stopListening();
     stopMicMeter();
     stopSpeaking();
+    speculationRef.current = null;
     aiBusyRef.current = false;
     setAiState("idle");
     setPhase("idle");
@@ -896,7 +960,9 @@ export default function Home() {
                 className="gl-mono text-[10px] uppercase tracking-[0.08em] mt-4"
                 style={{ color: "#A5AAA3" }}
               >
-                {speechSupported
+                {voiceStatus === "loading"
+                  ? "Preparing your interview!"
+                  : speechSupported
                   ? "Live voice · Follow-ups · Graded"
                   : "Typed answers · Follow-ups · Graded"}
               </div>
