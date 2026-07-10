@@ -6,11 +6,6 @@ I built this because every PM interview prep tool I tried felt like flashcards. 
 
 Greenlight does. You pick a question, start a 25-minute session, and talk through your answer out loud. When you pause for a couple seconds, a sparse AI interviewer jumps in — sometimes just a "go on," sometimes a pointed follow-up like "okay, but how would you actually size that market?" You can talk over it and it stops, just like a real person. When the timer runs out, you get scored across five PM competencies (Communication, Product Vision, Prioritization, Business Strategy, Data Literacy) with specific coaching on what to improve.
 
-## Why I built it this way
-
-The core product decision was making the interviewer *sparse*. Early versions responded after every sentence, which felt like talking to someone who wouldn't stop interrupting. Real interviewers mostly listen. They interject when something is vague or when you need a nudge. Getting that cadence right — silence detection, turn-taking, barge-in — turned out to be the actual product problem, not the grading.
-
-The grading evaluates the full conversation, not just the opening answer. How you handle a follow-up question matters more than a polished opening monologue, and the rubric reflects that.
 
 ## How it works
 
