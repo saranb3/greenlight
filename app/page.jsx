@@ -23,7 +23,9 @@ const LOW = "#D9534F";
 const SESSION_SECONDS = 25 * 60; // strict 25-minute interview
 const SILENCE_MS = 2500; // pause length that hands the floor to the interviewer
 const SPECULATE_MS = 1200; // start preparing the follow-up early so it plays the instant the pause matures
-const BARGE_RMS = 0.08; // mic loudness (0–1) that counts as the candidate cutting in
+const BARGE_RMS = 0.15; // mic loudness (0–1) that counts as the candidate cutting in — must clear speaker bleed of the interviewer's own voice (~0.08 on laptop mics)
+const BARGE_SUSTAIN_FRAMES = 15; // ~250ms of sustained loudness before cutting the interviewer off, so a transient spike or echo can't trigger it
+const ECHO_TAIL_MS = 1200; // after the interviewer stops, the recognizer may still finalize what it heard of HER voice — discard results in this window
 
 const fmt = (s) => {
   const m = Math.floor(s / 60);
@@ -247,6 +249,7 @@ export default function Home() {
 
   const recRef = useRef(null);
   const listeningRef = useRef(false);
+  const echoTailUntilRef = useRef(0); // recognition results before this timestamp are TTS echo, not the candidate
   const startedAtRef = useRef(null);
   const lastSpeechAtRef = useRef(0);
   const aiBusyRef = useRef(false);
@@ -382,7 +385,11 @@ export default function Home() {
     if (analyserRef.current) return; // already running
     if (!navigator.mediaDevices?.getUserMedia) return;
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        // Ask the browser to subtract its own audio output from the mic signal —
+        // reduces (doesn't eliminate) the interviewer's voice re-entering the mic.
+        audio: { echoCancellation: true, noiseSuppression: true },
+      });
       micStreamRef.current = stream;
       const Ctx = window.AudioContext || window.webkitAudioContext;
       const ctx = new Ctx();
@@ -408,7 +415,7 @@ export default function Home() {
         // cut the interviewer off — no waiting on speech recognition.
         if (aiBusyRef.current && voiceActive() && rms > BARGE_RMS) {
           bargeFramesRef.current += 1;
-          if (bargeFramesRef.current >= 2) {
+          if (bargeFramesRef.current >= BARGE_SUSTAIN_FRAMES) {
             stopSpeaking();
             aiBusyRef.current = false;
             setAiState("idle");
@@ -453,12 +460,14 @@ export default function Home() {
     rec.interimResults = true;
     rec.lang = "en-US";
     rec.onresult = (e) => {
-      // Barge-in: the candidate started talking — cut the interviewer off.
-      if (aiBusyRef.current && voiceActive()) {
-        stopSpeaking();
-        aiBusyRef.current = false;
-        setAiState("idle");
-      }
+      // The recognizer can't tell the candidate's voice from the interviewer's
+      // own TTS bleeding from the speakers into the mic, so results that arrive
+      // while she is audible — or in the short tail while the recognizer
+      // finalizes what it heard of her — are echo. Discard them entirely:
+      // no transcript turn, no interim, no silence-timer reset. Barge-in is
+      // handled by the mic meter, which requires sustained loudness that
+      // speaker bleed doesn't reach.
+      if (voiceActive() || Date.now() < echoTailUntilRef.current) return;
       lastSpeechAtRef.current = Date.now();
       let interimText = "";
       for (let i = e.resultIndex; i < e.results.length; i++) {
@@ -584,6 +593,7 @@ export default function Home() {
         aiBusyRef.current = false;
         setAiState("idle");
         lastSpeechAtRef.current = Date.now(); // don't instantly re-trigger
+        echoTailUntilRef.current = Date.now() + ECHO_TAIL_MS;
       });
     } catch (e) {
       aiBusyRef.current = false;
@@ -618,6 +628,7 @@ export default function Home() {
         aiBusyRef.current = false;
         setAiState("idle");
         lastSpeechAtRef.current = Date.now();
+        echoTailUntilRef.current = Date.now() + ECHO_TAIL_MS;
       });
     }, 400);
   };
