@@ -1,3 +1,4 @@
+// This is the brain of the interviewer. Rule page of what it says and how to conduct interviews
 // Sparse-interviewer turn. Runs server-side so the API key never reaches the browser.
 
 export async function POST(req) {
